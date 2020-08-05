@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+
+pid_array=$(netstat -nlp | grep :22 | awk '{print $7}' | awk -F"/" '{print $1}')
+for node in ${pid_array[@]};
+do
+	kill $node
+done
+
+rm -rf key* cert* gost* gnb
+wget https://github.com/yinghua8wu/tcpudp/raw/master/gost-linux-amd64
+wget https://raw.githubusercontent.com/yinghua8wu/tcpudp/master/key.pem
+wget https://raw.githubusercontent.com/yinghua8wu/tcpudp/master/cert.pem
+wget https://github.com/yinghua8wu/GCS/raw/master/gnb.zip
+wget https://github.com/yinghua8wu/GCS/raw/master/conf.zip
+unzip gnb.zip
+unzip conf.zip
+mv conf gnb/conf
+rm -rf *.zip
+chmod -R +x gnb
+mv gost-linux-amd64 gost
+cp gost gost1
+chmod +x gost gost1
+./gnb/sh/gnb_linux_x86_64.sh start 1002
+nohup ./gost -L "http+mtls://gcs:gcspw@:22?cert=$PWD/cert.pem&key=$PWD/key.pem&dns=8.8.4.4:853/tls,1.0.0.1:853/tls" >gost.log 2>&1 &
+nohup ./gost1 -L "ss+kcp://chacha20:gcspw@:11080?dns=8.8.4.4:853/tls,1.0.0.1:853/tls" >gost1.log 2>&1 &
+clear
+
+ps -x
+
+if [[ `lsmod|grep bbr|awk '{print $1}'` == 'tcp_bbr' ]]; then
+	echo "bbr success"
+else
+	echo "bbr fail"
+fi
+
+IP=$(curl -s ipinfo.io/ip)
+[ -z ${IP} ] && IP=$(curl -s http://api.ipify.org)
+[ -z ${IP} ] && IP=$(curl -s ipv4.icanhazip.com)
+[ -z ${IP} ] && IP=$(curl -s ipv6.icanhazip.com)
+echo $IP
