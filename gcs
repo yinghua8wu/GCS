@@ -22,7 +22,7 @@ chmod -R +x gnb
 mv gost-linux-amd64 gost
 cp gost gost1
 chmod +x gost gost1
-./gnb/sh/gnb_linux_x86_64.sh start 1002
+./gnb/sh/gnb_linux_x86_64.sh start 1001
 nohup ./gost -L "http+mtls://gcs:gcspw@:22?cert=$PWD/cert.pem&key=$PWD/key.pem&dns=8.8.4.4:853/tls,1.0.0.1:853/tls" >gost.log 2>&1 &
 nohup ./gost1 -L "ss+kcp://chacha20:gcspw@:11080?dns=8.8.4.4:853/tls,1.0.0.1:853/tls" >gost1.log 2>&1 &
 clear
