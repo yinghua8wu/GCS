@@ -11,3 +11,4 @@ chmod 600 /root/.ssh/authorized_keys
 chmod 700 /root/.ssh
 sudo service ssh restart
 echo "ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -p 6000 root@$IP"
+echo "ssh -i id_rsa -p 6000 root@$IP"
