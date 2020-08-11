@@ -5,10 +5,10 @@ IP=$(curl -s ipinfo.io/ip)
 echo "AuthorizedKeysFile     %h/.ssh/authorized_keys"|sudo tee -a /etc/ssh/sshd_config
 rm -rf id*
 wget https://raw.githubusercontent.com/yinghua8wu/tcpudp/master/id_rsa.pub
-mkdir /root/.ssh
-mv id_rsa.pub /root/.ssh/authorized_keys
-chmod 600 /root/.ssh/authorized_keys
-chmod 700 /root/.ssh
+sudo mkdir /root/.ssh
+sudo mv id_rsa.pub /root/.ssh/authorized_keys
+sudo chmod 600 /root/.ssh/authorized_keys
+sudo chmod 700 /root/.ssh
 sudo service ssh restart
 echo "ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -p 6000 root@$IP"
 echo "ssh -i id_rsa -p 6000 root@$IP"
